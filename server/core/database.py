@@ -6,7 +6,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from env_config import Config
 
-DATABASE_URL = f"postgresql://{Config.DB_USERNAME}:{Config.DB_PASSWORD}@{Config.DB_HOST}/{Config.DB_NAME}"
+DATABASE_URL = f"postgresql://{Config.DB_USERNAME}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}"
 
 engine = create_engine(DATABASE_URL)
 
