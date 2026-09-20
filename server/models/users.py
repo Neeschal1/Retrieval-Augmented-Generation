@@ -9,6 +9,6 @@ class User(Base):
     fullname = Column(String(255))
     email = Column(String(50), unique=True)
     username = Column(String(20), unique=True)
-    password = Column(String(20))
+    password = Column(String(255))
     gender = Column(String(6))
     isactive = Column(Boolean, default=False)
