@@ -1,10 +1,4 @@
 import streamlit as st
 
 def footer():
-    st.write("")
-    st.write("")
-    st.divider()
-
-    st.caption(
-        "🤖 Neeschal's RAG  •  Retrieval Augmented Generation"
-    )
+    st.caption("👧 PookieAI  •  Retrieval Augmented Generation: by Nischal Pokharel. All Rights Reserved!")

@@ -1,6 +1,12 @@
 import streamlit as st
 
-home_page = st.Page("pages/home.py", title="Home", icon="🏠")
+st.set_page_config(
+    page_title="PookieAI",
+    page_icon="👧",
+    layout="wide"
+)
+
+home_page = st.Page("pages/home.py", title="Home", icon="👧")
 login_page = st.Page("pages/login.py", title="Login", icon="🔐")
 signup_page = st.Page("pages/signup.py", title="Signup", icon="📝")
 

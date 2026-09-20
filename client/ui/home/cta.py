@@ -2,7 +2,7 @@ import streamlit as st
 
 def cta_section():
     st.header("Ready to talk to your data?")
-    st.write("Create your knowledge base and start asking questions.")
+    st.write("Create your knowledge base and start asking questions. Pookie will answer based on the data you've provided!")
 
     st.write("")
 
