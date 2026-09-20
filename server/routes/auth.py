@@ -1,13 +1,15 @@
 from fastapi import status, APIRouter, HTTPException
 from models.users import User as UserDB
-from schemas.auth import UserSignup as UserSchemas
+from schemas.auth import UserSignup as SignupSchema
+from schemas.auth import UserLogin as LoginSchema
 from core.database import db_dependencies
-from core.hash import hash_password
+from core.hash import hash_password, comparePassword
 
 userrouter = APIRouter(prefix='/users', tags=['Authentications'])
 
+# Create new user
 @userrouter.post('/create-users/', status_code=status.HTTP_201_CREATED)
-async def create_user(db: db_dependencies, user: UserSchemas):
+async def create_user(db: db_dependencies, user: SignupSchema):
     try:
         user_dump_data = user.model_dump()
         existing_email = db.query(UserDB).filter(user.email == UserDB.email).first()
@@ -42,6 +44,46 @@ async def create_user(db: db_dependencies, user: UserSchemas):
             },
         }
         
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"message": "Exception occurred!", "detail": str(e)},
+        )
+        
+
+# Log in an existing account from the database
+@userrouter.post("/login/", status_code=status.HTTP_200_OK)
+async def login(entered_detail: LoginSchema, db: db_dependencies):
+    try:
+        existing_user = db.query(UserDB).filter(UserDB.email == entered_detail.email).first()
+
+        if not existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={"message": "Email not found!"},
+            )
+
+        entered_password = entered_detail.password
+        db_password = existing_user.password
+        match_password = comparePassword(entered_password, db_password)
+
+        if not match_password:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"message": "Invalid Credentials. Try again!"}
+            )
+            
+        return {
+            "message": "Login Successful :)",
+            "user": {
+                "id": existing_user.id,
+                "fullName": existing_user.fullname,
+                "email": existing_user.email,
+                "username": existing_user.username,
+            }
+        }
+
     except Exception as e:
         db.rollback()
         raise HTTPException(

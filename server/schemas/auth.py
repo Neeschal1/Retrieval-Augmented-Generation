@@ -12,3 +12,7 @@ class UserSignup(BaseModel):
     username: str
     gender: Gender = "male"
     password: str
+    
+class UserLogin(BaseModel):
+    email: str
+    password: str
