@@ -8,6 +8,7 @@ class FileType(str, Enum):
     OTHERS = "others"
 
 class Document(BaseModel):
+    userid: int
     filename: str
-    filetype: str
-    fullcontent: FileType = "pdf"
+    filetype: FileType = "pdf"
+    fullcontent: str
