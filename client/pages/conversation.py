@@ -80,8 +80,13 @@ if not messages:
     st.info("👋 Start a conversation by asking something about your document.")
 else:
     for message in messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        if message["role"] == "user":
+            left, center, right = st.columns([1, 3, 1])
+            with right:
+                st.chat_message("user").markdown(message["content"])
+        else:
+            with st.chat_message("assistant"):
+                st.markdown(message["content"])
 
 
 # Chat input
