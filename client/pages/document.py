@@ -10,7 +10,7 @@ def document_popup(filename):
     st.success(f"{filename} uploaded successfully!")
     st.write("Your document is ready to be processed.")
     if st.button("Continue", type="primary", use_container_width=True):
-        st.switch_page("pages/conversation.py")
+        st.switch_page("pages/llm.py")
         st.rerun()
 
 
