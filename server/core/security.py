@@ -7,7 +7,8 @@ from env_config import Config
 
 SECRET_KEY = Config.SECRET_KEY
 ALGORITHM = Config.HASH_ALGORITHM
-ACCESS_TOKEN_EXPIRE_MINUTES = int(Config.TOKEN_EXPIRY)
+ACCESS_TOKEN_EXPIRE_MINUTES = int(Config.ACCESS_TOKEN_EXPIRY)
+REFRESH_TOKEN_EXPIRE_TIME = int(Config.REFRESH_TOKEN_EXPIRY)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -15,6 +16,16 @@ async def create_access_token(data: dict):
     details = data.copy()
     expiry = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     details.update({"exp": expiry})
+    return jwt.encode(
+        details,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+    
+async def create_refresh_token(data: dict):
+    details = data.copy()
+    expiry = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_TIME)
+    details.update({"exp": expiry, "type": "refresh"})
     return jwt.encode(
         details,
         SECRET_KEY,

@@ -12,4 +12,5 @@ class Config:
     
     SECRET_KEY = os.getenv('SECRET_KEY')
     HASH_ALGORITHM = os.getenv('HASH_ALGORITHM')
-    TOKEN_EXPIRY = os.getenv('TOKEN_EXPIRY')
+    ACCESS_TOKEN_EXPIRY = os.getenv('ACCESS_TOKEN_EXPIRY')
+    REFRESH_TOKEN_EXPIRY = os.getenv('REFRESH_TOKEN_EXPIRY')
