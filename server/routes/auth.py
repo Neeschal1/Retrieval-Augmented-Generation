@@ -1,4 +1,5 @@
 from fastapi import status, APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from models.users import User as UserDB
 from schemas.auth import UserSignup as SignupSchema
 from schemas.auth import UserLogin as LoginSchema
@@ -13,19 +14,16 @@ userrouter = APIRouter(prefix='/users', tags=['Authentications'])
 async def create_user(db: db_dependencies, user: SignupSchema):
     try:
         user_dump_data = user.model_dump()
-        existing_email = db.query(UserDB).filter(user.email == UserDB.email).first()
+        existing_email = (db.query(UserDB).filter(UserDB.email == user.email).first())
         if existing_email:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
+            return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"message": "Email already exists."})
         
-        existing_username = db.query(UserDB).filter(user.username == UserDB.username).first()
+        existing_username = (db.query(UserDB).filter(UserDB.username == user.username).first())
         if existing_username:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
-        
+            return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"message": "Username already exists."})
+
         hashed_password = hash_password(user_dump_data['password'])
-        
-        access_token = create_access_token({"sub": str(user_dump_data['id'])})
-        refresh_token = create_refresh_token({"sub": str(user_dump_data['id'])})
-        
+
         new_user = UserDB(
             fullname = user.fullname,
             email = user.email,
@@ -33,8 +31,13 @@ async def create_user(db: db_dependencies, user: SignupSchema):
             password = hashed_password,
             gender = user.gender.value
         )
-        
+
         db.add(new_user)
+        db.flush()
+        
+        access_token = await create_access_token({"sub": str(new_user.id)})
+        refresh_token = await create_refresh_token({"sub": str(new_user.id)})
+        
         db.commit()
         db.refresh(new_user)
         
@@ -54,9 +57,9 @@ async def create_user(db: db_dependencies, user: SignupSchema):
         
     except Exception as e:
         db.rollback()
-        raise HTTPException(
+        return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={"message": "Exception occurred!", "detail": str(e)},
+            content={"message": "Exception occurred!", "detail": str(e)},
         )
         
 
