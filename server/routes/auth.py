@@ -84,6 +84,9 @@ async def login(entered_detail: LoginSchema, db: db_dependencies):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail={"message": "Invalid Credentials. Try again!"}
             )
+        
+        access_token = await create_access_token({"sub": str(existing_user.id)})
+        refresh_token = await create_refresh_token({"sub": str(existing_user.id)})
             
         return {
             "message": "Login Successful :)",
@@ -92,6 +95,10 @@ async def login(entered_detail: LoginSchema, db: db_dependencies):
                 "fullName": existing_user.fullname,
                 "email": existing_user.email,
                 "username": existing_user.username,
+            },
+            "tokens": {
+                "accessToken": access_token,
+                "refreshToken": refresh_token
             }
         }
 
