@@ -13,7 +13,7 @@ email = st.text_input("Email", placeholder="Enter your email")
 username = st.text_input("Username", placeholder="Choose a username")
 gender = st.radio("Gender", ["male", "female", "others"], horizontal=True)
 password = st.text_input("Password", type="password", placeholder="Enter your password")
-confirm_password = st.text_input("Password", type="password", placeholder="Confirm your password")
+confirm_password = st.text_input("Confirm Password", type="password", placeholder="Confirm your password")
 remember_me = st.checkbox("Remember me :-)")
 
 signup_btn = st.button("Signup", type="primary", use_container_width=True)
@@ -36,7 +36,15 @@ if signup_btn:
         response = req.post(f"{Config.SERVER_API_URL}/users/create-users/", json=data)
         
         if response.status_code == 201:
+            data = response.json()
+            access_token = data["token"]["accessToken"]
+            refresh_token = data["token"]["refreshToken"]
             st.switch_page("pages/document.py")
+            
+        elif response.status_code == 409:
+            data = response.json()
+            error_placeholder.error(data['message'])
+            
         else:
             issue = response.json()
             detail = issue.get("detail")
