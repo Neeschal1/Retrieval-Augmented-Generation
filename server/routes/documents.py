@@ -7,12 +7,12 @@ from core.config import get_current_user
 
 uploadeddocument = APIRouter(prefix='/document', tags=['Documents'])
 
-@uploadeddocument.post("/get-docs-details", status_code=status.HTTP_200_OK)
+@uploadeddocument.post("/post-new-docs", status_code=status.HTTP_201_CREATED)
 def fetch_document(db: db_dependencies, docs: DocumentSchema, current_userid: str = Depends(get_current_user)):
     try:
         user = db.query(UserDB).filter(UserDB.id == int(current_userid)).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail={"message":"User not found"})
         
         document = DocumentsDataBase(
             userid=user.id,

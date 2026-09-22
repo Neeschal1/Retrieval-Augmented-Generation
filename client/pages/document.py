@@ -1,9 +1,12 @@
 import streamlit as st
 from pypdf import PdfReader
+import requests as req
+from env_config import Config
 
 st.title("📝 Upload Document")
 st.subheader("Provide your document in order to integrate AI within it.")
 
+error_placeholder = st.empty()
 
 @st.dialog("📄 Document Uploaded")
 def document_popup(filename):
@@ -24,13 +27,16 @@ if upload_doc_btn:
         
     else:     
         if document:
+            doc_type = None
             if document.type == "application/pdf":
+                doc_type = "pdf"
                 reader = PdfReader(document)
                 content = ""
                 for page in reader.pages:
                     content += page.extract_text() or ""
 
             elif document.type == "text/plain":
+                doc_type = "txt"
                 content = document.getvalue().decode("utf-8")
 
             else:
@@ -38,5 +44,23 @@ if upload_doc_btn:
                 content = ""
 
             if content:
-                document_popup(document.name)
+                data = {
+                    "filename": document.name,
+                    "filetype": doc_type,
+                    "fullcontent": content
+                }
                 
+                access_token = st.session_state.get("access_token")
+                if not access_token:
+                    st.error("You are not authenticated. Please login again.")
+                    st.stop()
+                bearerAuthorization = {"Authorization": f"Bearer {access_token}"}
+                
+                response = req.post(f"{Config.SERVER_API_URL}/document/post-new-docs/", json=data, headers=bearerAuthorization)
+                
+                if response.status_code == 201:
+                    document_popup(document.name)
+                
+                else:
+                    data = response.json()
+                    error_placeholder.error(f"Error {response.status_code}: {response.text}")
