@@ -36,9 +36,9 @@ if signup_btn:
         response = req.post(f"{Config.SERVER_API_URL}/users/create-users/", json=data)
         
         if response.status_code == 201:
-            data = response.json()
-            access_token = data["token"]["accessToken"]
-            refresh_token = data["token"]["refreshToken"]
+            result = response.json()
+            st.session_state["access_token"] = result["token"]["accessToken"]
+            st.session_state["refresh_token"] = result["token"]["refreshToken"]
             st.switch_page("pages/document.py")
             
         elif response.status_code == 409:
