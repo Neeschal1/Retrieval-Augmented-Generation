@@ -4,7 +4,7 @@ from models.users import User as UserDB
 from schemas.auth import UserSignup as SignupSchema
 from schemas.auth import UserLogin as LoginSchema
 from core.database import db_dependencies
-from core.hash import hash_password, comparePassword
+from core.hash import create_hashed_data, compare_data
 from core.security import create_access_token, create_refresh_token
 
 userrouter = APIRouter(prefix='/users', tags=['Authentications'])
@@ -22,7 +22,7 @@ async def create_user(db: db_dependencies, user: SignupSchema):
         if existing_username:
             return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"message": "Username already exists."})
 
-        hashed_password = hash_password(user_dump_data['password'])
+        hashed_password = create_hashed_data(user_dump_data['password'])
 
         new_user = UserDB(
             fullname = user.fullname,
@@ -77,7 +77,7 @@ async def login(entered_detail: LoginSchema, db: db_dependencies):
 
         entered_password = entered_detail.password
         db_password = existing_user.password
-        match_password = comparePassword(entered_password, db_password)
+        match_password = compare_data(entered_password, db_password)
 
         if not match_password:
             raise HTTPException(
