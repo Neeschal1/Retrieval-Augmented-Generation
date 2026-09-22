@@ -1,8 +1,6 @@
-from sqlalchemy import JSON, String, Column, Integer, Boolean, ForeignKey, Text, DateTime
-from pydantic import BaseModel
+from sqlalchemy import  String, Column, Integer,  ForeignKey, Text, DateTime
 from sqlalchemy.sql import func
 from core.database import Base
-from .users import User 
 
 class Docs(Base):
     __tablename__ = "Documents"

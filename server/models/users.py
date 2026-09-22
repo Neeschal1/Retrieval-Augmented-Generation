@@ -1,5 +1,4 @@
-from sqlalchemy import JSON, String, Column, Integer, Boolean
-from pydantic import BaseModel
+from sqlalchemy import String, Column, Integer, Boolean
 from core.database import Base
 
 class User(Base):
