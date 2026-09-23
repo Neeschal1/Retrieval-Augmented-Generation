@@ -14,3 +14,5 @@ class Config:
     HASH_ALGORITHM = os.getenv('HASH_ALGORITHM')
     ACCESS_TOKEN_EXPIRY = os.getenv('ACCESS_TOKEN_EXPIRY')
     REFRESH_TOKEN_EXPIRY = os.getenv('REFRESH_TOKEN_EXPIRY')
+    
+    ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
