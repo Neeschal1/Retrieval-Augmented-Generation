@@ -3,6 +3,11 @@ from pypdf import PdfReader
 import requests as req
 from env_config import Config
 
+token = st.session_state.get("access_token")
+if token is None:
+    st.switch_page("pages/login.py")
+    st.rerun()
+
 st.title("📝 Upload Document")
 st.subheader("Provide your document in order to integrate AI within it.")
 
@@ -22,10 +27,11 @@ upload_doc_btn = st.button("Upload Document", type="primary", use_container_widt
 
 
 if upload_doc_btn:
+        
     if document is None:
         st.error("Please any of your document in order to begin with...")
         
-    else:     
+    else:
         if document:
             doc_type = None
             if document.type == "application/pdf":

@@ -2,6 +2,11 @@ import streamlit as st
 from pypdf import PdfReader
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+token = st.session_state.get("access_token")
+if token is None:
+    st.switch_page("pages/login.py")
+    st.rerun()
+
 st.title("🧠 Upload your Google LLM API Key")
 st.subheader("Provide your Google LLM API in order to communicate with your provided document.")
 
