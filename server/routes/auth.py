@@ -64,7 +64,7 @@ async def create_user(db: db_dependencies, user: SignupSchema):
         
 
 # Log in an existing account from the database
-@userrouter.post("/login/", status_code=status.HTTP_200_OK)
+@userrouter.post("/login/", status_code=status.HTTP_201_CREATED)
 async def login(entered_detail: LoginSchema, db: db_dependencies):
     try:
         existing_user = db.query(UserDB).filter(UserDB.email == entered_detail.email).first()
